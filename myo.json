@@ -1,0 +1,45 @@
+{
+    "macAddress": "2b-or-n0-2b-QQ-QQ",
+    "name": "Stark",
+    "connectIndex": 0,
+    "locked": false,
+    "connected": true,
+    "synced": true,
+    "batteryLevel": 0,
+    "lastIMU": {
+      "orientation": {
+        "w": -0.54913330078125,
+        "x": -0.4156494140625,
+        "y": -0.362060546875,
+        "z": -0.6282958984375
+      },
+      "accelerometer": {
+        "x": 0.1279296875,
+        "y": 0.8095703125,
+        "z": 0.40673828125
+      },
+      "gyroscope": {
+        "x": -3.8125,
+        "y": -12.625,
+        "z": 10.9375
+      }
+    },
+    "arm": "left",
+    "direction": "toward_elbow",
+    "warmupState": "warm",
+    "orientationOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "events": [],
+    "connectVersion": "1.5.1970.2",
+    "lastQuant": {
+      "w": -0.54913330078125,
+      "x": -0.4156494140625,
+      "y": -0.362060546875,
+      "z": -0.6282958984375
+    },
+    "lastPose": null
+  }

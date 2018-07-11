@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Hello world</title>
+
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    socket.on('broadcast', function (data) {  
+
+        $(document).ready(function () {
+            var htmlContent = "Description : " + data.description + "<br/>";
+            htmlContent+="ScreenName : " + data.screenName + "<br/>";
+            htmlContent+="imageURl : " + data.imageUrl + "<br/>";
+            htmlContent+="orderId : " + data.orderId + "<br/>";
+
+            $('#content').html(htmlContent);
+            var myEl = document.getElementById(data.screenName);  
+
+            myEl.addEventListener('click', function () {
+            //    alert(data.screenName);
+                socket.emit("getNextScreen", data);
+                return false;
+            }, false);
+        });
+    });
+
+
+</script>
+
+<body>
+<div id="content"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+#container div#content{
+    text-align: center;
+    align-items: center;
+}
+#container div#content button{
+    margin: 10px;
+}
+
+#container img { 
+    margin-left: 30px;
+    margin-right: 30px;
+    display: block;   
+}
+
+.screenContent
+{
+    height: 100%;
+    width: 100%;
+    align-items: center;
+}
+
+.width-50
+{
+    width: 50%;
+}
+.width-100
+{
+    width:100%;
+}
+.float-left
+{
+    float:left;
+}
+.float-right
+{
+    float:right;
+}
+.align-left
+{
+    align-items: left;
+}
+.align-right
+{
+    align-items: right;
+}
+.align-center
+{
+    align-items:center;
+}
+.valign-middle
+{
+    vertical-align: -webkit-baseline-middle;
+    vertical-align: middle;
+}
+.header
+{
+    background-color:#AB131B;
+    color:#fff;
+    height:50px;
+    padding:0px; 
+    margin:0px; 
+    font-family: Arial, sans-serif; 
+    font-weight:bold;
+    font-size: 26px; 
+    padding-left:10px; 
+    padding-top:5px;
+    vertical-align: -webkit-baseline-middle;
+    vertical-align: middle;
+}
+
+.footer
+{
+    background-color:#AB131B;
+    width:100%;
+    color:#fff;
+    height:50px;
+    font-family: Arial; 
+    font-weight:bold;
+    font-size: 22px; 
+    padding-right:10px; 
+    vertical-align:middle; 
+    margin:0px;
+}
+.iconimgdiv
+{
+    padding: 0px;
+    padding-left: 200px;
+    padding-top: 8px;
+    margin: 0px;
+    align-items: right;
+    align-content: flex-end;
+}
+.customTimer
+{
+    padding: 0px;
+    padding-top: 0px;
+    margin: 0px;
+    align-items: left;
+    align-content: flex-start;
+}
+.icon-img
+{
+    height:20px;
+    width:20px;
+    align-self: right; 
+}
+.screen-img
+{
+    margin-left:30px;
+    margin-right:30px; 
+    margin-top:10px;
+    height: 300px;
+    width:300px;
+}
+
+.header-order-number
+{    
+    padding-top:5px;    
+}
+.orderidtext
+{
+    font-family: Arial, sans-serif; 
+    font-weight:normal;
+    font-size: 20px; 
+}
+.footer-order-number
+{    
+    padding-top:5px;    
+}
+.footerorderbigtxt
+{
+    font-family: Arial, sans-serif; 
+    font-weight:normal;
+    font-size: 20px; 
+}
+.footerordersmalltxt
+{
+    font-family: Arial, sans-serif; 
+    font-weight:normal;
+    font-size: 16px; 
+}

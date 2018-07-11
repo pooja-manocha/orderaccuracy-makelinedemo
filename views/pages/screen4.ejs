@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+	<script src="//js.leapmotion.com/leap-0.6.3.js"></script>
+
+	<link rel = "stylesheet" type = "text/css" href = "//localhost:3001/css/style.css" />
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+		socket.on('broadcast', function (data) {
+			
+			$(document).ready(function () {
+				if(data.orderId!=undefined){
+					$('#img1').attr('src',data.imageUrl[0]);
+					$('#img2').attr('src',data.imageUrl[1]);
+					$('#img3').attr('src',data.imageUrl[2]);
+					$('#iconImages').attr('src', data.imagePath+'/glossy-green-icon.png');
+					$('#header-order-number').html(" 14\" "+ data.orderName +"<span class='orderidtext'> Order 00100300"+data.orderId+" </span>");
+					$('#footer-order-number').html("Next UP: <span class='footerorderbigtxt'> 14\" "+data.orderName +" </span><span class='footerordersmalltxt'> Order 00100300"+data.orderId+"</span> ");
+					$('#orderId').html(data.orderId);
+					$('#screenName').html("Screen"+data.screenName);
+					
+					var timerInstance = new Timer();
+					timerInstance.start();
+					
+					timerInstance.addEventListener('secondsUpdated', function (e) {
+						$('#customTimer').html(timerInstance.getTimeValues().toString());
+						//console.log("Timer value---------->", timerInstance.getTimeValues().toString());
+						if(timerInstance.getTimeValues().toString()=="00:00:01")
+						{
+							$('#img2').fadeOut();
+							$('#img3').fadeOut();
+							$('#img1').fadeIn();
+						}
+						else if(timerInstance.getTimeValues().toString()=="00:00:04")
+						{
+							$('#img1').css('display','inline');
+							$('#img1').attr('src',data.imageUrl[3]);
+							$('#img2').fadeIn();
+						}else if(timerInstance.getTimeValues().toString()=="00:00:07")
+						{
+							//$('#img2').fadeOut();
+							$('#img3').fadeIn();
+							$('#img1').css('display','inline');
+							$('#img2').css('display','inline');
+							$('#img1').attr('src',data.imageUrl[3]);
+							$('#img2').attr('src',data.imageUrl[4]);							
+						}
+						else if(timerInstance.getTimeValues().toString()=="00:00:10"){
+							timerInstance.stop();
+							$('#img1').css('display','inline');
+							$('#img2').css('display','inline');
+							$('#img1').attr('src',data.imageUrl[3]);
+							$('#img2').attr('src',data.imageUrl[4]);							
+							$('#img3').css('display','inline');
+							$('#img3').attr('src',data.imageUrl[5]);							
+							//timerInstance.start();
+						}
+
+					});
+					$("#screenContent").show();
+					$("#"+data.id).click(function(){
+						socket.emit("getNextScreen", data);
+					});				
+				}else{
+					$("#screenContent").hide();
+				}
+				
+				window.controller = new Leap.Controller({enableGestures: true});
+				var swiper = controller.gesture('swipe');
+				if (swiper.state == "stop") {
+					console.log('swiper-------------------------------------------');
+					//getNextOrder();
+				}
+
+				
+
+
+
+			});
+		});
+
+	</script>
+	<% include ../partials/head %>  
+	
+</head>
+
+<body class="container" id="container">
+	<header>
+		<% include ../partials/header %>
+	</header>
+
+	<main>
+			<div class="form-group screenContent" Id="screenContent" style="display: none"> 				
+					<div id="content">
+						<div class="container-fluid align-center">
+								<img id="img1" class="img-responsive float-left screen-img" src="" alt="pizza" > 
+								<img id="img2" class="img-responsive float-left screen-img" src="" alt="pizza" > 
+								<img id="img3" class="img-responsive float-left screen-img" src="" alt="pizza" > 
+						</div>
+					</div>
+					<div class="row"> 
+						<!-- <button class="btn btn-default" id="screen4" style="margin-left: 500px">MYO Right Swap</button> -->
+						<p>
+							Order Id : <span id="orderId"></span>
+							Screen Name : <span id="screenName"></span>						
+						</p>
+					</div>				
+				</div>		
+	</main>
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+
+</html>
