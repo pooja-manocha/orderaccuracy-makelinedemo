@@ -179,9 +179,9 @@ function getNextOrder(data) {
     imageUrl.push(imagePath + pizzaOrder.orders[(data.orderId-1)].images[(data.screenName)][4])
     imageUrl.push(imagePath + pizzaOrder.orders[(data.orderId-1)].images[(data.screenName)][5])
     var imageRotationTimer =  pizzaOrder.orders[(data.orderId-1)].stepTime[(data.screenName)];
-    
-
-    io.sockets.to(socketArr[data.screenName]).emit('broadcast', { id: "screen"+ (data.screenName) , screenName: (data.screenName+1), imageUrl: imageUrl,  orderId: data.orderId,imagePath:imagePath,imageRotationTimer:imageRotationTimer,orderName: data.orderName });
+   // var pizzaTime= pizzaOrder.orders[(data.orderId-1)].pizzaTime;
+    console.log("data pizza time--------->", data.pizzaTime);
+    io.sockets.to(socketArr[data.screenName]).emit('broadcast', { id: "screen"+ (data.screenName) , screenName: (data.screenName+1), imageUrl: imageUrl,  orderId: data.orderId,imagePath:imagePath,imageRotationTimer:imageRotationTimer,orderName: data.orderName, pizzaTime: data.pizzaTime });
 }
 
 
@@ -250,6 +250,7 @@ function displayOrder(){
     imageUrl.push(imagePath + pizzaOrder.orders[nextOrder].images[stepCount][4])
     imageUrl.push(imagePath + pizzaOrder.orders[nextOrder].images[stepCount][5])
     var imageRotationTimer =  pizzaOrder.orders[nextOrder].stepTime[stepCount];
+    var pizzaTime = pizzaOrder.orders[nextOrder].pizzaTime;
 
     var ordername= pizzaOrder.orders[nextOrder].name;
     console.log("Order name --->", ordername);
@@ -257,7 +258,7 @@ function displayOrder(){
     for (var i = 0; i <= 3; i++) {      
         io.sockets.to(socketArr[i]).emit('broadcast', {});
     }
-    io.sockets.to(socketArr[0]).emit('broadcast', { id: "screen"+ screenCount , screenName: screenCount, imageUrl: imageUrl, stepCount: stepCount, orderId: pizzaOrder.orders[nextOrder].orderId,imagePath:imagePath,imageRotationTimer:imageRotationTimer,orderName: ordername });
+    io.sockets.to(socketArr[0]).emit('broadcast', { id: "screen"+ screenCount , screenName: screenCount, imageUrl: imageUrl, stepCount: stepCount, orderId: pizzaOrder.orders[nextOrder].orderId,imagePath:imagePath,imageRotationTimer:imageRotationTimer,orderName: ordername, pizzaTime:pizzaTime });
 }
 http.listen(3000, function () {
     console.log('listening on *:3000');

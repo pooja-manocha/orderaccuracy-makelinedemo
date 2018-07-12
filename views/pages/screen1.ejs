@@ -34,9 +34,26 @@
 
 					var timerInstance = new Timer();
 					timerInstance.start();
-					
+
+					var pizzaTimer = new Timer();
+					pizzaTimer.start({precision: 'seconds'});
+
+					pizzaTimer.addEventListener('secondsUpdated', function (e) {
+						$('#customTimer').html(pizzaTimer.getTimeValues().toString());
+						console.log("Timer value---------->", pizzaTimer.getTimeValues().seconds);
+						if(pizzaTimer.getTimeValues().seconds >= data.imageRotationTimer && pizzaTimer.getTimeValues().seconds < 2*(data.imageRotationTimer))
+						{
+							$('#iconImages').attr('src', data.imagePath+'/yellow-circle-icon.png');
+						}
+						if(pizzaTimer.getTimeValues().seconds >= 2*(data.imageRotationTimer) && pizzaTimer.getTimeValues().seconds <= 3*(data.imageRotationTimer))
+						{
+							$('#iconImages').attr('src', data.imagePath+'/red-circle-icon.png');
+						}
+					});
+
+
 					timerInstance.addEventListener('secondsUpdated', function (e) {
-						$('#customTimer').html(timerInstance.getTimeValues().toString());
+						//$('#customTimer').html(timerInstance.getTimeValues().toString());
 						//console.log("Timer value---------->", timerInstance.getTimeValues().toString());
 						if(timerInstance.getTimeValues().toString()=="00:00:01")
 						{
@@ -59,14 +76,13 @@
 							$('#img2').attr('src',data.imageUrl[4]);							
 						}
 						else if(timerInstance.getTimeValues().toString()=="00:00:10"){
-							timerInstance.stop();
 							$('#img1').css('display','inline');
 							$('#img2').css('display','inline');
 							$('#img1').attr('src',data.imageUrl[3]);
 							$('#img2').attr('src',data.imageUrl[4]);							
 							$('#img3').css('display','inline');
-							$('#img3').attr('src',data.imageUrl[5]);							
-							//timerInstance.start();
+							$('#img3').attr('src',data.imageUrl[5]);
+							timerInstance.stop();
 						}
 
 					});
@@ -76,13 +92,27 @@
 					$("#screen1").click(function(){
 						$("#screen1").focusout();
 						$("#screen1").css({"background-color":"red", "color": "white"})
+						data.pizzaTime = pizzaTimer.getTimeValues().seconds;
 						socket.emit("getNextScreen",data);
 					});				
 				}else{
 					$("#screenContent").hide();
 				}
 				
+				$(document).keydown(function(e) {
+					var userInput = e.target.value;
+					if(e.keyCode== 32)
+					{
+						alert("There is no screen behind");
+					}
+					if(e.keyCode==13)
+					{
+						data.pizzaTime = pizzaTimer.getTimeValues().toString();
+						//code for swipe
+					}
+					console.log("user pressed ------------->",userInput);
 
+					});
 
 				window.controller = new Leap.Controller({enableGestures: true});
 				var swiper = controller.gesture('swipe');

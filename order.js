@@ -20,13 +20,14 @@ var pizzaOrder = {
 				""
 			],
 			"stepTime": [  
-				"00:00:10",
-				"00:00:10",
-				"00:00:10",
-				"00:00:00"
+				"10",
+				"10",
+				"10",
+				"00"
 			],
 			"pizzaCrust": ["HALF_BAKED", "BAKED", "CRISPY", "BURNT", "ON_FIRE"],
-			"createdDate": new Date(Date.now()).toLocaleString() 
+			"pizzaTime" : "180",
+			"createdDate": new Date(Date.now()).toLocaleString()
 		},
 		// order 2
 		 {
@@ -46,13 +47,15 @@ var pizzaOrder = {
 				"Cheese"
 			],
 			"stepTime": [  
-				"00:00:10",
-				"00:00:40",
-				"00:00:30",
-				"00:00:10"
+				"10",
+				"10",
+				"10",
+				"00"
 			],
 			"pizzaCrust": ["HALF_BAKED", "BAKED", "CRISPY", "BURNT", "ON_FIRE"],  
+			"pizzaTime" : "180",
 			"createdDate": new Date(Date.now()).toLocaleString()
+
 		},
 		// order 3  
 		  {
@@ -72,12 +75,13 @@ var pizzaOrder = {
 				"Cheese"
 			],
 			"stepTime": [  
-				"00:00:10",
-				"00:00:00",
-				"00:00:20",
-				"00:00:10"
+				"10",
+				"10",
+				"10",
+				"00"
 			],
 			"pizzaCrust": ["HALF_BAKED", "BAKED", "CRISPY", "BURNT", "ON_FIRE"],
+			"pizzaTime" : "180",
 			"createdDate": new Date(Date.now()).toLocaleString()
 		} 
 	]
