@@ -11,14 +11,11 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		var socket = io();
-		socket.on('broadcast', function (data) {
-			
+		socket.on('broadcast', function (data) {			
 			$(document).ready(function () {
 				if(data.orderId!=undefined){
-					console.log(data.imageRotationTimer)
-					$('#img1').attr('src',data.imageUrl[0]);
-					$('#img2').attr('src',data.imageUrl[1]);
-					$('#img3').attr('src',data.imageUrl[2]);
+					$('#content').show();
+					$("#txtContent").hide();
 					$('#iconImages').attr('src', data.imagePath+'/glossy-green-icon.png');
 					$('#header-order-number').html(" 14\" "+ data.orderName +"<span class='orderidtext'> Order 00100300"+data.orderId+" </span>");
 					$('#footer-order-number').html("Next UP: <span class='footerorderbigtxt'> 14\" "+data.orderName +" </span><span class='footerordersmalltxt'> Order 00100300"+data.orderId+"</span> ");
@@ -29,13 +26,10 @@
 					var timerInstance = new Timer();
 					timerInstance.start();
 
-					var pizzaTimer = new Timer();
-					console.log("Data pizza time---------->", data.pizzaTimer);
+					var pizzaTimer = new Timer();					
 					pizzaTimer.start({precision: 'seconds', startValues: {seconds: data.pizzaTime}});
-
 					pizzaTimer.addEventListener('secondsUpdated', function (e) {
-						$('#customTimer').html(pizzaTimer.getTimeValues().toString());
-						
+						$('#customTimer').html(pizzaTimer.getTimeValues().toString());						
 						if(pizzaTimer.getTimeValues().seconds >= data.imageRotationTimer && pizzaTimer.getTimeValues().seconds < 2*(data.imageRotationTimer))
 						{
 							$('#iconImages').attr('src', data.imagePath+'/yellow-circle-icon.png');
@@ -46,9 +40,19 @@
 						}
 					});
 					
+					if(data.imageRotationTimer!=0)
+					{
+					
+					console.log("Ordername -- "+ data.orderName + " Screen -- "+ data.screenName +" round -- "+ data.subScreen+ "started---------->>>");			
+					console.log("on Screen 2-------> data.isRotation-->", data.isRotation);
+					console.log("on Screen 2-------> data.subScreen-->", data.subScreen);
+					console.log("data object ----> ", data);
+					$('#img1').attr('src',data.imageUrl[0]);
+					$('#img2').attr('src',data.imageUrl[1]);
+					$('#img3').attr('src',data.imageUrl[2]);					
+					
 					timerInstance.addEventListener('secondsUpdated', function (e) {
-						//$('#customTimer').html(timerInstance.getTimeValues().toString());
-						//console.log("Timer value---------->", timerInstance.getTimeValues().toString());
+					
 						if(timerInstance.getTimeValues().toString()=="00:00:01")
 						{
 							$('#img2').fadeOut();
@@ -79,39 +83,105 @@
 							$('#img3').attr('src',data.imageUrl[5]);							
 							//timerInstance.start();
 						}
+					});					
+				}
+				else
+				{
+					$('#content').hide();
+					$('#txtContent').show();
+					$('#txtContent').html("Please move to next station");					
+				}
 
-					});
-
-
-					$("#screen2").css({"background-color":"green", "color": "white"})
-					console.log("data from screen 1--------->", data);
-					setTimeout(function(){
-						$("#screen2").focus();
-					},3000);
+					$("#screen2").css({"background-color":"green", "color": "white"});
 					$("#screenContent").show();
+					$(document).keydown(function(e) {	
+						var userInput = e.target.value;
+						if(e.keyCode== 32)
+						{
+							//code to go back to previous screen
+							data.pizzaTime=pizzaTimer.getTimeValues().seconds;
+							pizzaTimer.stop();
+							socket.emit("getPrevScreen", data);
+						}
+						if(e.keyCode==13)
+						{
+							$("#screen2").css({"background-color":"red", "color": "white"})
+							data.pizzaTime=pizzaTimer.getTimeValues().seconds;
+							console.log(" before on Screen 3-------> data.isRotation-->", data.isRotation);
+							console.log(" before on Screen 3-------> data.subScreen-->", data.subScreen);
+							console.log(" Subscreens total number ", (data.subScreens["screen2"].numberOfSubScreen - 1))
+							if(data.isRotation && (data.subScreen < (data.subScreens["screen2"].numberOfSubScreen - 1)))
+							{
+								console.log("round ---> ", data.subScreen );
+								data.isRotation = data.subScreens["screen2"].isRotation;
+								data.subScreen= data.subScreen+1;
+								$('#img1').attr('src','');
+								$('#img2').attr('src','');
+								$('#img3').attr('src','');
+							}
+							else
+							{
+								if(data.subScreen == (data.subScreens["screen2"].numberOfSubScreen - 1))
+								{								
+									data.screenName=data.screenName+1;
+								}
+								data.isRotation = data.subScreens["screen3"].isRotation;								
+								data.subScreen =0;	
+								console.log("next screen set round ---> ", data.subScreen);
+							}
+							console.log("data object ----> ", data);
+						console.log(" After on Screen 3-------> data.isRotation-->", data.isRotation);
+						console.log(" After on Screen 3-------> data.subScreen-->", data.subScreen);
+						pizzaTimer.stop();
+							socket.emit("getNextScreen", data);
+						}
+						
+					});
+					$("#screen22").click(function(){
+						//$("#screen2").focusout();
+						data.pizzaTime=pizzaTimer.getTimeValues().seconds;
+						pizzaTimer.stop();
+						socket.emit("getPrevScreen", data);
+					});	
+					
 					$("#screen2").click(function(){
-						$("#screen2").focusout();
+						//$("#screen2").focusout();
 						$("#screen2").css({"background-color":"red", "color": "white"})
 						data.pizzaTime=pizzaTimer.getTimeValues().seconds;
+						console.log(" before on Screen 3-------> data.isRotation-->", data.isRotation);
+							console.log(" before on Screen 3-------> data.subScreen-->", data.subScreen);
+							console.log(" Subscreens total number ", (data.subScreens["screen2"].numberOfSubScreen - 1))
+							if(data.isRotation && (data.subScreen < (data.subScreens["screen2"].numberOfSubScreen - 1)))
+							{
+								console.log("round ---> ", data.subScreen );
+								data.isRotation = data.subScreens["screen2"].isRotation;
+								data.subScreen= data.subScreen+1;
+								$('#img1').attr('src','');
+								$('#img2').attr('src','');
+								$('#img3').attr('src','');
+							}
+							else
+							{
+								if(data.subScreen == (data.subScreens["screen2"].numberOfSubScreen - 1))
+								{								
+									data.screenName=data.screenName+1;
+								}
+								data.isRotation = data.subScreens["screen3"].isRotation;								
+								data.subScreen =0;								
+								console.log("next screen set round ---> ", data.subScreen);
+							}
+							console.log("data object ----> ", data);
+						console.log(" After on Screen 3-------> data.isRotation-->", data.isRotation);
+						console.log(" After on Screen 3-------> data.subScreen-->", data.subScreen);
+						pizzaTimer.stop();
 						socket.emit("getNextScreen", data);
 					});				
 				}else{
-					$("#screenContent").hide();
-				}
-
-				$(document).keydown(function(e) {
-					var userInput = e.target.value;
-					if(e.keyCode== 32)
-					{
-						//code to go back to previous screen
+						$("#screenContent").hide();
+						pizzaTimer.stop();
 					}
-					if(e.keyCode==13)
-					{
-						//code for swipe
-					}
-					console.log("user pressed ------------->",userInput);
 
-					});
+				
 
 				window.controller = new Leap.Controller({enableGestures: true});
 				var swiper = controller.gesture('swipe');
@@ -131,22 +201,25 @@
 		<% include ../partials/header %>
 	</header>
 	<main>	
-			<div class="form-group screenContent" Id="screenContent" style="display: none"> 				
+			<div class="form-group screenContent" Id="screenContent" > 
+					<div id="txtContent" style="display:none"></div>				
 					<div id="content">
 						<div class="container-fluid align-center">
 								<img id="img1" class="img-responsive float-left screen-img" src="" alt="pizza" > 
 								<img id="img2" class="img-responsive float-left screen-img" src="" alt="pizza" > 
 								<img id="img3" class="img-responsive float-left screen-img" src="" alt="pizza" > 
 						</div>
-					</div>
-					<div class="row"> 
-						<button class="btn btn-default" id="screen2" style="margin-left: 500px">MYO Right Swap</button>
+					</div>	
+					<div class="row"> 						
+						<button class="btn btn-default float-left align-center" id="screen22" >MYO Left Swap</button>
+						<button class="btn btn-default float-right align-center" id="screen2" >MYO Right Swap</button>
 						<p>
 							Order Id : <span id="orderId"></span>
 							Screen Name : <span id="screenName"></span>						
 						</p>
-					</div>				
+					</div>								
 				</div>
+				
 	</main>
 	<footer>
 		<% include ../partials/footer %>
