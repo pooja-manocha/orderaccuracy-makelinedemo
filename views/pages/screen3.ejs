@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>	
+	<script src="//localhost:3001/myo.js"></script>
+	<link rel="stylesheet" type="text/css" href="//localhost:3001/css/style.css" />
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		localStorage.setItem("screenThree", "false");
+		$(document).ready(function () {
+			var socket = io();
+			var pizzaTimer=new Timer();
+			socket.on('broadcast', function (data) {
+				if (data.hasOwnProperty("isFedIn")) {
+					$("#screen3").css({ "background-color": "red", "color": "white" });
+					$("#screen33").css({ "background-color": "red", "color": "white" });
+					$('#header-order-number').html("");
+					$('#customTimer').html("");
+							if(pizzaTimer.isRunning())
+							{								
+								var newValueSec = parseInt(pizzaTimer.getTimeValues().seconds | 0)+1;
+								var newValueMin = parseInt(pizzaTimer.getTimeValues().minutes | 0);
+								localStorage.setItem("pizzaTimeMin",newValueMin);
+								localStorage.setItem('pizzaTimeSec',newValueSec);								
+								pizzaTimer.stop(); 
+								pizzaTimer.removeEventListener();
+							}
+					$("#overlay3").fadeIn();
+				} else {
+					if (data != null) {					
+						$("#overlay1").fadeIn();
+						$("#overlay3").fadeOut();
+						$("#overlay4").fadeIn();
+						$("#overlay2").fadeIn();
+						if (data.orderId != undefined) {
+							localStorage.setItem("screenData", JSON.stringify(data));						
+							var min=0;
+							var sec=0;
+							min=parseInt(localStorage.getItem("pizzaTimeMin"));
+							sec=parseInt(localStorage.getItem("pizzaTimeSec"));
+							pizzaTimer.start({ precision:'seconds', startValues:  { seconds: parseInt(min*60+sec)}});
+							$('#img1').attr('src', data.imageUrl[0]);
+							$('#iconImages').show();
+							$('#iconImages').attr('src', data.imagePath + '/glossy-green-icon.png');
+							var nextOrderDetail = nextOrder(data.orderId);
+							$('#header-order-number').html(" 14\" " + nextOrderDetail[3] + "<span class='orderidtext'> Order " + nextOrderDetail[2] + " </span>");							
+							$('#footer-order-number').html("Next UP: <span class='footerorderbigtxt'> 14\" " + nextOrderDetail[1] + " </span><span class='footerordersmalltxt'> Order " + nextOrderDetail[0] + "</span> ");
+							$('#orderId').html(data.orderId);
+							$('#screenName').html("Screen" + data.screenName);							
+								pizzaTimer.addEventListener('secondsUpdated', function (e) {								   
+									$('#customTimer').html(pizzaTimer.getTimeValues().toString()); 									
+									var timerVal=pizzaTimer.getTimeValues().minutes*60 + pizzaTimer.getTimeValues().seconds;						
+									if (timerVal >= 60 && timerVal < 120) {
+										$('#iconImages').attr('src', data.imagePath + '/yellow-circle-icon.png');
+									}
+									if (timerVal >= 120 && timerVal <=500) {
+										$('#iconImages').attr('src', data.imagePath + '/red-circle-icon.png');
+									}    
+								});						
+							$("#screen3").css({ "background-color": "green", "color": "white" });
+							$("#screen33").css({ "background-color": "green", "color": "white" });
+							setTimeout(function () {
+								$("#screen3").focus();
+							}, 1000);
+							$("#screenContent").show();							
+							$("#screen33").unbind().click(function () {
+								prevScreenLogic();
+							});							
+							$("#screen3").unbind().click(function () {
+								nextScreenLogic();
+							});							
+							function prevScreenLogic() {
+								$("#screen33").focusout();
+								$("#screen33").css({ "background-color": "red", "color": "white" });
+								$("#overlay2").fadeIn();
+								$("#overlay1").fadeIn();
+								$("#overlay3").fadeIn();
+								$("#overlay4").fadeIn();
+								localStorage.setItem("screenData", JSON.stringify(data));								
+								localStorage.setItem("pizzaTimeMin",parseInt(pizzaTimer.getTimeValues().minutes | 0));
+								localStorage.setItem("pizzaTimeSec",parseInt(pizzaTimer.getTimeValues().seconds));
+														
+								pizzaTimer.stop(); 	
+								pizzaTimer.removeEventListener();
+								$('#customTimer').html("");	
+								$('#iconImages').hide();
+								$('#header-order-number').html("");			
+								socket.emit("getPrevScreen", data);
+							}
+							function nextScreenLogic() {
+								console.log("nextscreenlogic");
+								localStorage.setItem("screenThree", "false");
+								localStorage.setItem("screenTwo", "false");
+								localStorage.setItem("screenOne", "false");
+								localStorage.setItem("screenFour", "true");
+								$("#screen3").focusout();
+								$("#screen3").css({ "background-color": "red", "color": "white" });
+								$("#overlay2").fadeIn();
+								$("#overlay1").fadeIn();
+								$("#overlay3").fadeIn();
+								$("#overlay4").fadeIn();
+								localStorage.setItem("screenData", JSON.stringify(data));
+								localStorage.setItem("pizzaTimeMin",parseInt(pizzaTimer.getTimeValues().minutes | 0));
+								localStorage.setItem("pizzaTimeSec",parseInt(pizzaTimer.getTimeValues().seconds));
+								
+								pizzaTimer.stop(); 	
+								pizzaTimer.removeEventListener();	
+								$('#customTimer').html("");	
+								$('#iconImages').hide();
+								$('#header-order-number').html("");							
+								socket.emit("getNextScreen", data);
+							}
+						} else {
+							$("#screenContent").hide();
+							$('#iconImages').hide();
+							pizzaTimer.stop(); 	
+							pizzaTimer.removeEventListener();	
+							$('#customTimer').html("");	
+							$('#header-order-number').html("");		
+						}
+					}
+				}
+			});
+		});
+	</script>
+	<% include ../partials/head %>
+</head>
+<body class="container" id="container">
+	<div id="overlay3">
+	</div>
+	<header>
+		<% include ../partials/header %>
+	</header>
+	<main>
+		<div class="form-group screenContent" Id="screenContent" style="display: none">
+			<div id="content">
+				<div class="container-fluid align-center">
+					<img id="img1" class="img-responsive float-left screen-img" src="" alt="pizza">				
+				</div>
+			</div>		
+			<div class="row">
+				<a class="btn btn-default float-left align-center" id="screen33">
+					<i class="fa fa-arrow-left" style="font-size:24px"></i>
+				</a>
+				<a class="btn btn-default float-right align-center" id="screen3">
+					<i class="fa fa-arrow-right" style="font-size:24px"></i>
+				</a>
+
+			</div>
+		</div>
+	</main>
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+</body>
+</html>
+<script src="//localhost:3001/common.js"></script>

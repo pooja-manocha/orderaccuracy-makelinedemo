@@ -1,0 +1,26 @@
+{
+  "name": "pizza",
+  "version": "1.0.0",
+  "description": "Demo project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abhishek Kumar",
+  "license": "ISC",
+  "dependencies": {
+    "await-fs": "^1.0.0",
+    "dns": "^0.2.2",
+    "ejs": "^2.5.7",
+    "express": "^4.16.3",
+    "express-ejs-layouts": "^1.1.0",
+    "fscreen": "^1.0.2",
+    "keypress": "^0.2.1",
+    "leapjs": "^0.6.4",
+    "myo": "^3.0.0",
+    "path": "^0.12.7",
+    "socket.io": "^2.1.1",
+    "winston": "^3.0.0",
+    "ws": "^5.2.2"
+  }
+}

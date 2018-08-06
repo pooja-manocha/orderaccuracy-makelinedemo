@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//localhost:3001/myo.js"></script>    
+    <script src="//localhost:3001/common.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/easytimer@1.1.1/src/easytimer.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//localhost:3001/css/style.css" />
+    <script> 
+         var socket = null;
+         //function to send pizza selection by user and getting response on screen 1
+         function myFunction(id) {
+                localStorage.setItem("screenOne", "true");
+                localStorage.setItem("pizzaTimeMin",parseInt("0"));
+                localStorage.setItem("pizzaTimeSec",parseInt("0"));
+                console.log('select_link clicked');
+                var data = {};
+                data.title = "title";
+                data.message = "message";
+                data.id = id;                
+                socket = io();                
+                socket.emit("initStartup", data);
+            }
+        //function to setup the admin screen and connect to the MYO sensor
+         $(document).ready(function () {            
+            $('#iconImages').attr('src', '//localhost:3001/images/glossy-green-icon.png');
+            $('#header-order-number').html("Select Order for Makeline");
+            $('#footer-order-number').html("");            
+            //MYO connection code
+            Myo.connect('com.stolksdorf.myAwesomeApp');
+            console.log("Myo connection started ");            
+            //invoking the MYO wave out event      
+            Myo.on('wave_out', function () {
+              // calling the Next screen logic from common.js          
+                commonNextScreen();
+            });
+            //invoking the MYO wave in event   
+            Myo.on('wave_in', function () {
+               //calling the Previous screen logic from common.js           
+                commonPrevScreen();
+            }); 
+           
+           
+        });
+        
+       
+       
+    </script>
+
+    <% include ../partials/head %>
+</head>
+
+<body class="container" id="container">
+    <header>
+        <% include ../partials/header %>
+    </header>
+    <main>
+        <div id="content">
+            <h1> </h1>
+            <button id="p1" onclick="myFunction(this.id)">Pepperoni Pizza</button>
+            <button id="p2" onclick="myFunction(this.id)">The Works Pizza </button>
+            <button id="p3" onclick="myFunction(this.id)">Custom Pizza</button>
+        </div>
+    </main>
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+
+</body>
+
+</html>
